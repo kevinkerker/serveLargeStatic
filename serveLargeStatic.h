@@ -3,8 +3,25 @@
 
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
+#include <FS.h>
+#include <SD.h>
 
-void serveLargeStatic(AsyncWebServer& Server, const char* uri, fs::FS& fs, const char* path,
-                      const char* cache_control);
+#include <vector>
+
+extern std::map<String, String> active_file_transfers;
+
+class serveLargeStaticFolder {
+ public:
+  serveLargeStaticFolder(AsyncWebServer& Server, fs::FS& fs, char* path, char* cache_control);
+
+  mutable FS __fs;
+  AsyncWebServer __asyncWebServer;
+  char* __path;
+  char* __cache_control;
+  bool downloadInProgress = false;
+};
+
+size_t load_data(File f, uint8_t* buffer, size_t maxLen, size_t index);
+void init_slsf(char* uri);
 
 #endif /* A21B2A88_DCB4_459A_89A0_94CF0A5AED33 */
